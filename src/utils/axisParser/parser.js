@@ -397,6 +397,7 @@ export function parseOperationSequence(opStr, roleName = '') {
       !!last.strong === !!op.strong &&
       last.comboStart != null &&
       op.comboStart != null &&
+      op.comboStart === last.comboEnd + 1 && // 仅连续递增的段才合并
       !last.comment &&
       !op.comment
 
