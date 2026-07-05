@@ -11,7 +11,6 @@ import {
   LAYOUT
 } from './constants'
 
-// 对外导出常量，与原文件保持一致
 export { ROLE_DATABASE, KEY_ALIAS, MODE_ALIAS, LAYOUT }
 
 /**
@@ -22,7 +21,7 @@ export { ROLE_DATABASE, KEY_ALIAS, MODE_ALIAS, LAYOUT }
  */
 export function textAxisToJson(inputText, options = {}) {
   try {
-    const { title = '文字轴导入', selectedTeam = null } = options
+    const { title = '', selectedTeam = null } = options
     const cleaned = preprocessText(inputText)
 
     const candidates = selectedTeam && selectedTeam.length > 0
@@ -98,9 +97,12 @@ export function textAxisToJson(inputText, options = {}) {
       lastBlockIdMap.set(block.roleName, blockId)
     })
 
+    const defaultTitle = team.map(role => role.name.charAt(0)).join('') || '文字轴导入'
+    const finalTitle = title || defaultTitle
+
     return {
       version: "1.0",
-      metadata: { title, description: "", createdAt: now, updatedAt: now },
+      metadata: { title: finalTitle, description: "", createdAt: now, updatedAt: now },
       team,
       rotation: {
         blocks,

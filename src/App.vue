@@ -2,7 +2,7 @@
   <div class="app">
     <header class="header">
       <h1>鸣潮文字轴转JSON工具</h1>
-      <p class="subtitle">通过文字轴导出_D4RK_标准的Json格式</p>
+      <p class="subtitle">通过文字轴导出_D4Rk_标准的Json格式</p>
     </header>
 
     <main class="main">
@@ -90,7 +90,7 @@
     </main>
 
     <footer class="footer">
-      <span>生成的 JSON 文件可直接导入椰果排轴工具</span>
+      <!-- <span>生成的 JSON 文件可直接导入椰果排轴工具</span> -->
     </footer>
   </div>
 </template>
