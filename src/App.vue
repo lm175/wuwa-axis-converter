@@ -57,7 +57,7 @@
           v-model="inputText"
           class="input-area"
           placeholder="示例：
-长 E，露 E，船 a12，露 R-E，切回长 R-预输入Z，切回船 a12，切回露 a12，长 狂按a-E，船 a，切回露 a34，切回长 跳-a，船 a12，切回长 a34，露 强E，切回船 a，切回长 跳-Q，切回露 Q，延奏船 强E-R-a1-长按Z-a3-Q-闪-a34-强E，延奏长 a-E-预输入Z-R-预输入Z，延奏露 强变R-E"
+长 E，露 E，船长 a12，露 RE，切回长 R 预输入Z，切回船长 a12，切回露 a12，长 狂按a E，船长 a，切回露 a34，切回长 跳 a，船长 a12，切回长 a34，露 强E，切回船长 a，切回长 跳 Q，切回露 Q，延奏船长 强E Ra1Za3Q 闪 a34 强E，延奏长 aE 预输入Z R 预输入Z，延奏露 强变RE"
         ></textarea>
 
         <div class="syntax-tip">
