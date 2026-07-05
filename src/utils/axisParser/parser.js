@@ -271,31 +271,11 @@ export function parseOperationSequence(opStr, roleName = '') {
     let mode = 'click'
     let strong = false
     let isHeavyAttack = false
-
     let modifierMatched = true
-    while (modifierMatched) {
-      modifierMatched = false
-      for (const [flag, modeValue] of sortedModeEntries) {
-        if (opStr.slice(i).startsWith(flag)) {
-          mode = modeValue
-          i += flag.length
-          modifierMatched = true
-          break
-        }
-      }
-      for (const flag of sortedStrongFlags) {
-        if (opStr.slice(i).startsWith(flag)) {
-          strong = true
-          i += flag.length
-          modifierMatched = true
-          break
-        }
-      }
-    }
 
     let key = null
     let matchedTerm = null
-
+    // 匹配角色专属术语
     if (roleTerms.length > 0) {
       for (const termItem of roleTerms) {
         if (opStr.slice(i).startsWith(termItem.term)) {
@@ -303,6 +283,28 @@ export function parseOperationSequence(opStr, roleName = '') {
           key = termItem.key
           i += termItem.term.length
           break
+        }
+      }
+    }
+    // 通用修饰符+按键
+    if (!matchedTerm) {
+      while (modifierMatched) {
+        modifierMatched = false
+        for (const [flag, modeValue] of sortedModeEntries) {
+          if (opStr.slice(i).startsWith(flag)) {
+            mode = modeValue
+            i += flag.length
+            modifierMatched = true
+            break
+          }
+        }
+        for (const flag of sortedStrongFlags) {
+          if (opStr.slice(i).startsWith(flag)) {
+            strong = true
+            i += flag.length
+            modifierMatched = true
+            break
+          }
         }
       }
     }
@@ -427,6 +429,19 @@ export function parseBlockFragment(blockData, index) {
       keyOps.push(...parsedOps)
     }
 
+    // 合并重复的入场/变奏操作（延露强变、延守洞悉等）
+    const introOps = keyOps.filter(op => op.key === 'intro')
+    if (introOps.length > 1) {
+      const mergedIntro = introOps.reduce((prev, curr) => ({
+        ...prev,
+        ...curr,
+        strong: prev.strong || curr.strong
+      }), {})
+      const otherOps = keyOps.filter(op => op.key !== 'intro')
+      keyOps.length = 0
+      keyOps.push(mergedIntro, ...otherOps)
+    }
+
     if (keyOps.length === 0) {
       keyOps.push({ key: 'V', mode: 'click' })
     }
@@ -441,6 +456,26 @@ export function parseBlockFragment(blockData, index) {
   } catch {
     return null
   }
+}
+
+// ========== 注释宽度计算 ==========
+function calcCommentWidth(comment) {
+  if (!comment || !comment.trim()) return 0
+  
+  let widthUnits = 0
+  for (const char of comment) {
+    // 汉字、中文标点、全角符号计 2 个宽度单位
+    if (/[\u4e00-\u9fa5\u3000-\u303f\uff00-\uffef]/.test(char)) {
+      widthUnits += 2
+    } else {
+      // 英文、数字、半角符号计 1 个宽度单位
+      widthUnits += 1
+    }
+  }
+
+  if (widthUnits <= 0) return 0
+  // 1个单位基础宽度15，每多1个单位加5
+  return 15 + (widthUnits - 1) * 5
 }
 
 // ========== 单动作宽度计算 ==========
@@ -458,7 +493,8 @@ export function calcActionWidth(op) {
     comboWidth = LAYOUT.comboBase + (segCount - 1) * LAYOUT.comboExtraPer
   }
 
-  return base + comboWidth
+  const commentWidth = calcCommentWidth(op.comment)
+  return base + comboWidth + commentWidth
 }
 
 // ========== X坐标计算 ==========
